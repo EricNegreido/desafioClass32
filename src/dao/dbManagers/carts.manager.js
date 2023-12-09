@@ -6,19 +6,18 @@ export default class Carts {
     }
 
     getArray= async (cid) => {
+    
         const carts = await cartsModel.findById({_id: cid}).lean().populate('products.product'); // Con .lean() convertimos a un objetos manipulable en java
         return carts;
 
     }
     save = async () => {
         const result = await cartsModel.create({products:[]});
-        console.log(result);
         return result;
     }
 
     update = async (id, products) => {
-    console.log(products)
-
+    
         const result = await cartsModel.updateOne({_id: id},{products: products});
         console.log(result)
 

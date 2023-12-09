@@ -1,33 +1,33 @@
 import { getCartService, updateCartService, addCartService } from '../services/carts.services.js';
-import { getProductIdService, updateProductService } from '../services/products.services.js';
+import { getProductIdService } from '../services/products.services.js';
 import { ticketService } from '../services/ticket.services.js';
-import { updateProduct } from './products.controller.js';
-import { generateNotFoundInfo } from '../middleware/errors/info.js';
-import Errors from '../middleware/errors/enums.js';
-import CustomError from '../middleware/errors/CustomError.js';
+import { generateNotFoundInfo } from '../services/errors/info.js';
+import CustomError from '../services/errors/CustomError.js';
+import EErrors from '../services/errors/enums.js';
 
 const getCart = async (req, res) => {
 
     const {cid} = req.params;
    
     try{
-        const carts = await getCartService(cid);
-
+        const carts = await getCartService(cid) ;
         if(!carts){
-             throw CustomError.createError({
+            throw CustomError.createError({
                 name:'Cart Not found',
                 cause: generateNotFoundInfo(cid),
                 message:'Cart Not found',
-                code:Errors.CART_NOT_FOUND
+                code:EErrors.CART_NOT_FOUND
+                
         });
+
         }else{
+            console.log(carts);
             res.send({status: 'sucess', payload: carts});           
         }
 
     }
     catch(error){
-        res.status(500).send({status: 'error', error: error.message})
-        
+        throw error
     }
 
 };
@@ -41,27 +41,23 @@ const addCartProduct = async (req, res) => {
         const cart = await getCartService(cid)
         const product = await getProductIdService(pid);
 
-        if(cart){
+        if(cart && product){
 
-            if (product) {
-            console.log(cart.products)
                 
                 const existingProduct = cart.products.find(item => item.product._id === pid);
-                console.log(existingProduct)
                 if (existingProduct) {
                     existingProduct.quantity += quantity || 1;
-                    console.log(quantity)
                 } else {
-                    console.log(quantity)
-
                     cart.products.push({ product: pid, quantity: quantity || 1 });
-                    console.log(cart.products)
                 }
-            
+        }else{
+            throw CustomError.createError({
+                name: cart ? 'Product Not found' : 'Cart Not found',
+                cause: cart ? generateNotFoundInfo(pid) : generateNotFoundInfo(cid),
+                message:cart ? 'Product Not found' : 'Cart Not found',
+                code:EErrors.RESOURCE_NOT_FOUND
+            });
         }
-
-     }
-
 
     const result = await updateCartService(cid, cart.products);
     ///PROBLEMAS AL GUARDAR
@@ -69,8 +65,8 @@ const addCartProduct = async (req, res) => {
 
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'ERROR AL AGREGAR EL PRODUCTO' });
+        throw error
+
     }
 };
 
@@ -93,8 +89,14 @@ const updateCartProduct =  async (req, res) => {
 
                 existingProduct.quantity += quantity || 1;
             }
-
-     }
+        }else{
+            throw CustomError.createError({
+                name: cart ? 'Product Not found' : 'Cart Not found',
+                cause: cart ? generateNotFoundInfo(pid) : generateNotFoundInfo(cid),
+                message:cart ? 'Product Not found' : 'Cart Not found',
+                code:EErrors.RESOURCE_NOT_FOUND
+            });
+        }
 
 
     const result = await updateCartService(cid, cart.products);
@@ -103,8 +105,8 @@ const updateCartProduct =  async (req, res) => {
 
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'ERROR AL AGREGAR EL PRODUCTO' });
+        throw error
+
     }
 };
 
@@ -124,13 +126,17 @@ const deleteCartProduct = async (req, res) => {
             
             res.status(201).send({status: 'sucess', payload: result}); 
         }else{
-            res.status(404).json({ error: 'NO SE ENCONTRO PRODUCTO O CARRITO' });
+            throw CustomError.createError({
+                name: cart ? 'Product Not found' : 'Cart Not found',
+                cause: cart ? generateNotFoundInfo(pid) : generateNotFoundInfo(cid),
+                message:cart ? 'Product Not found' : 'Cart Not found',
+                code:EErrors.RESOURCE_NOT_FOUND
+            });
         }
         
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'ERROR AL ELIMINAR EL PRODUCTO' });
+        throw error
     }
 };
 
@@ -141,7 +147,7 @@ const addCart = async (req, res) =>{
         res.status(201).send({status: 'sucess', payload: result}); 
 
     }catch(error){
-        res.status(500).send({status: 'error', error: error.message})
+        throw error
     }
 };
 
@@ -160,7 +166,7 @@ const cartPurchaser = async(req,res) => {
         const ticket = ticketService(total)
         res.send({status: 'sucess', payload: ticket});
     }catch(error){
-        res.status(500).send({status: 'error', error: error.message})
+        throw error
     }
 };
 
@@ -184,7 +190,7 @@ const deleteCart = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'ERROR AL ELIMINAR EL PRODUCTO' });
+        throw error
     }
 };
 

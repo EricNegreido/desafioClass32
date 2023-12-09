@@ -23,7 +23,7 @@ const sendMail = async (req, res) =>{
 
     } catch (error) {
         console.error('Error al enviar el correo electrónico:', error);
-        res.status(500).send('Error al enviar el correo electrónico');
+        throw error
     }
     
 

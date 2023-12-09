@@ -9,7 +9,7 @@ const generateTicket = async(req, res) => {
 
     } catch (error) {
         console.error('Error generating ticket:', error);
-        res.status(500).send({status: 'error', error: error.message})
+        throw error
 
     }
    

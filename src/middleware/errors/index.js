@@ -1,34 +1,30 @@
-import Errors from "./enums.js";
+import EErrors from "../../services/errors/enums.js";
 
 export default (error, req, res, next) => {
+    console.log(`CAUSA: ${error.cause}`);
+    console.log(`ERROR: ${error.code}`);
     switch(error.code){
-        case Errors.INVALID_TYPE_ERROR:
+        case EErrors.INVALID_TYPE_ERROR:
             res.status(400).send({
                 status:'error',
                 error:error.name,
-                description:error.cause
+                message: error.message
+
             })
             break;
-        case Errors.CART_NOT_FOUND:
+        case EErrors.RESOURCE_NOT_FOUND:
             res.status(404).send({
                 status:'error',
                 error:error.name,
-                description:error.cause
+                message: error.message
+
             })
-            break;
-        case Errors.PRODUCT_NOT_FOUND:
-            res.status(404).send({
-                status:'error',
-                error:error.name,
-                description:error.cause
-            });
             break;
         default:
             res.status(500).send({
                 status:'error',
                 error:error.name,
-                description:error.cause
+                message: error.message
             })
-            break;
     }
 }

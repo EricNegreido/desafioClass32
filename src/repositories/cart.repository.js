@@ -1,7 +1,4 @@
-import {CartDto} from '../DTOs/dto.js'
-import Errors from '../middleware/errors/enums.js';
-import CustomError from '../middleware/errors/CustomError.js';
-import { generateNotFoundInfo } from '../middleware/errors/info.js';
+
 
 export default class CartsRepository {
     constructor(dao){

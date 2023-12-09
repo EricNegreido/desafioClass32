@@ -8,7 +8,7 @@ const getProducts = async (req, res) =>{
         const products = await getProductsService(limit, page, sort, query);
         res.send({status: 'sucess', payload: products});
     }catch(error){
-        res.status(500).send({status: 'error', error: error.message})
+        throw error
     }
 
 };
@@ -18,7 +18,7 @@ const getProductId = async (req, res) =>{
         const products = await getProductIdService(id);
         res.send({status: 'sucess', payload: products});
     }catch(error){
-        res.status(500).send({status: 'error', error: error.message})
+        throw error
     }
 
 };
@@ -39,7 +39,7 @@ const addProduct = async (req, res) =>{
         res.status(201).send({status: 'sucess', payload: result}); 
 
     }catch(error){
-        res.status(500).send({status: 'error', error: error.message})
+        throw error
     }
 };
 
@@ -63,7 +63,7 @@ const updateProduct = async (req, res) =>{
 
 
     }catch(error){
-        res.status(500).send({status: 'error', error: error.message})
+        throw error
     }
 };
 
@@ -78,7 +78,7 @@ const deleteProduct = async (req, res) =>{
             res.status(404).json({ error: 'Product not found'});
         }
     }catch(error){
-        res.status(500).send({status: 'error', error: error.message})
+        throw error
     }
 
 };

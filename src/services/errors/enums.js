@@ -1,0 +1,11 @@
+const EErrors = {
+    ROUNTING_ERROR: 1,
+    INVALID_TYPE_ERROR: 2,
+    USER_NOT_FOUND: 3,
+    RESOURCE_NOT_FOUND: 4,
+    CREATE_PRODUCT_ERROR:5,
+    UPDATE_PRODUCT_ERROR:6
+    
+}
+
+export default EErrors;

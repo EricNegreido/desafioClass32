@@ -22,6 +22,10 @@ export default class Products {
     }
 
     update = async (id, product) => {
+        const objectIdCid = mongoose.Types.ObjectId.isValid(id) ? mongoose.Types.ObjectId(cid) : null;
+        if(!objectIdCid){
+            return null;
+        }
         const result = await productsModel.updateOne({_id: id}, product);
         return result
     }
